@@ -32,13 +32,17 @@ jobs:
         run: |
           @echo off
           setlocal enabledelayedexpansion
-          for %%f in (target\springboot-gym-html-app-windows.jar) do (
+          set "found=false"
+          for %%f in (target\*.jar) do (
             echo Running %%f
             java -jar %%f
+            set "found=true"
             goto done
           )
-          echo No JAR file found in target
-          exit /b 1
+          if not !found!==true (
+            echo No JAR file found in target
+            exit /b 1
+          )
           :done
         shell: cmd
 
