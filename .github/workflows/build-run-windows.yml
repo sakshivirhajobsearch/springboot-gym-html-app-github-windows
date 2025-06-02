@@ -1,4 +1,4 @@
-name: Java Maven Build and Run
+name: Build and Run Spring Boot App on windows
 
 on:
   push:
