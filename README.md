@@ -1,0 +1,1 @@
+[![Build and Run Spring Boot App on Windows](https://github.com/sakshivirhajobsearch/springboot-gym-html-app-github-windows/actions/workflows/build-run-windows.yml/badge.svg)](https://github.com/sakshivirhajobsearch/springboot-gym-html-app-github-windows/actions/workflows/build-run-windows.yml)
