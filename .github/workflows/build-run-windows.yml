@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-run:
     runs-on: self-hosted
-    # Optionally, you can restrict to Windows self-hosted runner:
+    # If you want to limit to only Windows self-hosted runners, uncomment below:
     # runs-on: [self-hosted, windows]
 
     steps:
@@ -25,11 +25,17 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      - name: List contents of target folder (debug)
+        run: dir target
+
       - name: Run Spring Boot app
-        # Run the jar directly
+        shell: pwsh
         run: |
-          cd target
-          java -jar springboot-gym-html-app-github-windows-0.0.1-SNAPSHOT.jar
-        # To keep the process running in background for demo, use `start` command or run in background
-        # But in CI, the job waits for this step, so usually you run tests or stop here.
-        
+          $jar = Get-ChildItem -Path target -Filter '*.jar' | Select-Object -First 1
+          if ($jar) {
+            Write-Host "Running: $($jar.FullName)"
+            java -jar $jar.FullName
+          } else {
+            Write-Error "JAR file not found in target directory."
+            exit 1
+          }
