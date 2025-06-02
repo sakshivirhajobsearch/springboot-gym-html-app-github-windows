@@ -2,11 +2,9 @@ name: Build and Run Spring Boot App
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-and-run:
@@ -15,8 +13,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: main
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -24,22 +20,34 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build with Maven
+      - name: Build with Maven (includes repackage)
         run: mvn clean install
         shell: cmd
 
-      - name: Run Spring Boot app
-        run: java -jar target\springboot-gym-html-app-1.0.0.jar
+      - name: List JAR files in target
+        run: dir target
         shell: cmd
 
-    # You can simulate post build success/failure using the job outputs or simply add an additional step
-    # Here is a simple approach with a success message step:
+      - name: Run Spring Boot app (auto-detect JAR)
+        run: |
+          @echo off
+          setlocal enabledelayedexpansion
+          for %%f in (target\springboot-gym-html-app-*.jar) do (
+            echo Running %%f
+            java -jar %%f
+            goto done
+          )
+          echo No JAR file found in target
+          exit /b 1
+          :done
+        shell: cmd
+
       - name: Success message
-        if: success()
-        run: echo "✅ Spring Boot app is running locally!"
+        if: ${{ success() }}
+        run: echo Spring Boot app ran successfully!
         shell: cmd
 
       - name: Failure message
-        if: failure()
-        run: echo "❌ Build failed!"
+        if: ${{ failure() }}
+        run: echo Build or run failed!
         shell: cmd
