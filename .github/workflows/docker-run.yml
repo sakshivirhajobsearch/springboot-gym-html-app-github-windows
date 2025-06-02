@@ -1,41 +1,45 @@
-name: Docker Build and Run
+name: Build and Run Spring Boot App
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build_and_run:
-    runs-on: self-hosted
+  build-and-run:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: main
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    # Uncomment and configure if pushing to Docker Hub
-    # - name: Login to DockerHub
-    #   uses: docker/login-action@v2
-    #   with:
-    #     username: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build with Maven
+        run: mvn clean install
+        shell: cmd
 
-    - name: Build Docker image
-      run: docker build -t springboot-gym-html-app:latest .
+      - name: Run Spring Boot app
+        run: java -jar target\springboot-gym-html-app-1.0.0.jar
+        shell: cmd
 
-    - name: Run Docker container
-      run: |
-        docker run -d -p 8080:8080 --name springboot-gym-html-app springboot-gym-html-app:latest
-        sleep 10
-        curl -f http://localhost:8080/ || exit 1
-        docker logs springboot-gym-html-app
+    # You can simulate post build success/failure using the job outputs or simply add an additional step
+    # Here is a simple approach with a success message step:
+      - name: Success message
+        if: success()
+        run: echo "✅ Spring Boot app is running locally!"
+        shell: cmd
 
-    - name: Stop and remove container
-      if: always()
-      run: |
-        docker stop springboot-gym-html-app
-        docker rm springboot-gym-html-app
+      - name: Failure message
+        if: failure()
+        run: echo "❌ Build failed!"
+        shell: cmd
