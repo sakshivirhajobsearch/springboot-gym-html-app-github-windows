@@ -1,41 +1,43 @@
-name: Windows Spring Boot CI
+name: Java Maven Build and Run
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build-and-run:
-    runs-on: [self-hosted, windows]
+    runs-on: self-hosted
+
     env:
-      JAVA_HOME: 'C:\Program Files\Java\jdk-17'
-      PATH: 'C:\Program Files\Java\jdk-17\bin;${{ env.PATH }}'
+      JAVA_HOME: 'C:\\Program Files\\Java\\jdk-17'
+      PATH: ${{ env.JAVA_HOME }}\\bin:${{ env.PATH }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: main
 
       - name: Set up Maven
-        uses: s4u/setup-maven-action@v1.11.0
-        with:
-          maven-version: '3.8.8'  # Adjust if using a different version
+        # Assuming Maven is installed on self-hosted runner
+        run: mvn --version
 
       - name: Build with Maven
         run: mvn clean install
         shell: cmd
 
       - name: Run Spring Boot App
-        run: java -jar target\springboot-gym-html-app-github-ubuntu-1.0.0.jar
+        run: java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
         shell: cmd
 
-      - name: Success Message
+    # GitHub Actions does not have a direct post step like Jenkins
+    # You can use the "if" condition on steps to notify success or failure
+
+      - name: Notify Success
         if: success()
-        run: echo Spring Boot app is running locally!
-        shell: cmd
+        run: echo "Spring Boot app is running locally!"
 
-      - name: Failure Message
+      - name: Notify Failure
         if: failure()
-        run: echo Build failed!
-        shell: cmd
+        run: echo "Build failed!"
