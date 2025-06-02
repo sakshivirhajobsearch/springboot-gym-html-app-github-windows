@@ -32,7 +32,7 @@ jobs:
         run: |
           @echo off
           setlocal enabledelayedexpansion
-          for %%f in (target\springboot-gym-html-app-*.jar) do (
+          for %%f in (target\springboot-gym-html-app-windows.jar) do (
             echo Running %%f
             java -jar %%f
             goto done
