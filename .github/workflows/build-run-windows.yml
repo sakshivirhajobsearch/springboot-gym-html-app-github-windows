@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-run:
     runs-on: self-hosted
-    # If you want to limit to only Windows self-hosted runners, uncomment below:
+    # Optional: Restrict to only Windows runners
     # runs-on: [self-hosted, windows]
 
     steps:
@@ -29,7 +29,7 @@ jobs:
         run: dir target
 
       - name: Run Spring Boot app
-        shell: pwsh
+        shell: powershell
         run: |
           $jar = Get-ChildItem -Path target -Filter '*.jar' | Select-Object -First 1
           if ($jar) {
