@@ -34,20 +34,23 @@ jobs:
         run: |
           set PATH=%JAVA_HOME%\bin;%PATH%
           start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.address=0.0.0.0 > app.log 2>&1
+
           setlocal enabledelayedexpansion
           set count=0
+
           :waitloop
-          curl --silent http://localhost:8080 >nul 2>&1
+          curl --silent http://localhost:8080/home.html > response.txt 2>&1
           if errorlevel 1 (
             echo Waiting for app to start...
             timeout /t 2 >nul
             set /a count+=1
             if !count! lss 30 goto waitloop
-            echo App did not start in time. Logs:
+            echo App did not start or /home.html not available after 60 seconds. Logs:
             type app.log
             exit /b 1
           ) else (
-            echo App is running
+            echo /home.html is accessible:
+            type response.txt
           )
           endlocal
         shell: cmd
