@@ -34,15 +34,28 @@ jobs:
         shell: powershell
         run: |
           $env:PATH="$env:JAVA_HOME\bin;" + $env:PATH
-          # Start the app (runs in background)
-          Start-Process -FilePath java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar", "--server.address=0.0.0.0"
-          Start-Sleep -Seconds 10
-          # Test if the app is accessible
-          try {
-            Invoke-WebRequest -Uri http://localhost:8080/home.html -UseBasicParsing
-            Write-Host "/home.html is accessible"
-          } catch {
-            Write-Host "Failed to access /home.html"
+          # Start Spring Boot app in background, output redirected to app.log
+          Start-Process -FilePath java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar", "--server.address=0.0.0.0" -NoNewWindow
+          # Wait and retry loop for app to be ready
+          $maxRetries = 30
+          $retry = 0
+          $appStarted = $false
+          while ($retry -lt $maxRetries -and -not $appStarted) {
+            Start-Sleep -Seconds 2
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:8080/home.html -UseBasicParsing -TimeoutSec 5
+              if ($response.StatusCode -eq 200) {
+                Write-Host "/home.html is accessible"
+                $appStarted = $true
+              }
+            } catch {
+              Write-Host "Waiting for app to start... (Attempt $($retry+1) of $maxRetries)"
+            }
+            $retry++
+          }
+          if (-not $appStarted) {
+            Write-Host "App did not start within expected time. Showing last 20 lines of app.log:"
+            Get-Content -Path app.log -Tail 20
             Exit 1
           }
 
