@@ -64,8 +64,3 @@ jobs:
         if: failure()
         run: echo "Build or test failed!"
         shell: cmd
-
-      - name: Stop Spring Boot App
-        if: success()
-        run: taskkill /F /IM java.exe || exit 0
-        shell: cmd
