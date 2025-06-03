@@ -33,17 +33,18 @@ jobs:
       - name: Run Spring Boot App and Test Endpoint
         run: |
           set PATH=%JAVA_HOME%\bin;%PATH%
-          start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
+          start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.address=0.0.0.0 > app.log 2>&1
           setlocal enabledelayedexpansion
           set count=0
-          :loop
+          :waitloop
           curl --silent http://localhost:8080 >nul 2>&1
           if errorlevel 1 (
             echo Waiting for app to start...
             timeout /t 2 >nul
             set /a count+=1
-            if !count! lss 30 goto loop
-            echo App did not start in time
+            if !count! lss 30 goto waitloop
+            echo App did not start in time. Logs:
+            type app.log
             exit /b 1
           ) else (
             echo App is running
