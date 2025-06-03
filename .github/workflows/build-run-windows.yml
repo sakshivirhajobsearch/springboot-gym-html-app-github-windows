@@ -18,21 +18,22 @@ jobs:
         with:
           ref: main
 
-      - name: Add JAVA_HOME to PATH
-        run: |
-          echo "##[set-env name=PATH]${{ env.JAVA_HOME }}\\bin;${PATH}"
-        shell: cmd
-
       - name: Set up Maven
-        run: mvn --version
+        run: |
+          set PATH=%JAVA_HOME%\bin;%PATH%
+          mvn --version
         shell: cmd
 
       - name: Build with Maven
-        run: mvn clean install
+        run: |
+          set PATH=%JAVA_HOME%\bin;%PATH%
+          mvn clean install
         shell: cmd
 
       - name: Run Spring Boot App
-        run: java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
+        run: |
+          set PATH=%JAVA_HOME%\bin;%PATH%
+          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
         shell: cmd
 
       - name: Notify Success
