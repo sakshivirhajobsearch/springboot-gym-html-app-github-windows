@@ -30,18 +30,21 @@ jobs:
           mvn clean install
         shell: cmd
 
-      - name: Run Spring Boot App
+      - name: Run Spring Boot App and Test Endpoint
         run: |
           set PATH=%JAVA_HOME%\bin;%PATH%
-          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
+          start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
+          timeout /T 10
+          curl http://localhost:8080
+          taskkill /F /IM java.exe
         shell: cmd
 
       - name: Notify Success
         if: success()
-        run: echo "Spring Boot app is running locally!"
+        run: echo "Spring Boot app is running and test passed!"
         shell: cmd
 
       - name: Notify Failure
         if: failure()
-        run: echo "Build failed!"
+        run: echo "Build or test failed!"
         shell: cmd
