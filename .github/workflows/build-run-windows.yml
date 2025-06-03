@@ -31,29 +31,20 @@ jobs:
         shell: cmd
 
       - name: Run Spring Boot App and Test Endpoint
+        shell: powershell
         run: |
-          set PATH=%JAVA_HOME%\bin;%PATH%
-          start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.address=0.0.0.0 > app.log 2>&1
-
-          setlocal enabledelayedexpansion
-          set count=0
-
-          :waitloop
-          curl --silent http://localhost:8080/home.html > response.txt 2>&1
-          if errorlevel 1 (
-            echo Waiting for app to start...
-            timeout /t 2 >nul
-            set /a count+=1
-            if !count! lss 30 goto waitloop
-            echo App did not start or /home.html not available after 60 seconds. Logs:
-            type app.log
-            exit /b 1
-          ) else (
-            echo /home.html is accessible:
-            type response.txt
-          )
-          endlocal
-        shell: cmd
+          $env:PATH="$env:JAVA_HOME\bin;" + $env:PATH
+          # Start the app (runs in background)
+          Start-Process -FilePath java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar", "--server.address=0.0.0.0"
+          Start-Sleep -Seconds 10
+          # Test if the app is accessible
+          try {
+            Invoke-WebRequest -Uri http://localhost:8080/home.html -UseBasicParsing
+            Write-Host "/home.html is accessible"
+          } catch {
+            Write-Host "Failed to access /home.html"
+            Exit 1
+          }
 
       - name: Notify Success
         if: success()
