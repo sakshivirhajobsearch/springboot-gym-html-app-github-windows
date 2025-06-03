@@ -34,7 +34,6 @@ jobs:
         run: |
           set PATH=%JAVA_HOME%\bin;%PATH%
           start /B java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar
-
           setlocal enabledelayedexpansion
           set count=0
           :loop
@@ -64,5 +63,5 @@ jobs:
 
       - name: Stop Spring Boot App
         if: success()
-        run: taskkill /F /IM java.exe
+        run: taskkill /F /IM java.exe || exit 0
         shell: cmd
