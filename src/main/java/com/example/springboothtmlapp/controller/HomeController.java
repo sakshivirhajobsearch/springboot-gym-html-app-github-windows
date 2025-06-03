@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-	@GetMapping("/hello")
+	@GetMapping("/home")
 	public String sayHello() {
-		return "hello";
+		return "home";
 	}
 
 }
