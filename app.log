@@ -1,0 +1,4 @@
+2025-06-05T01:20:46.550+05:30  INFO 69316 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Starting SpringBootGYMHtmlAppApplicationTests using Java 17.0.10 with PID 69316 (started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:20:46.552+05:30  INFO 69316 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:20:48.185+05:30  INFO 69316 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:20:48.614+05:30  INFO 69316 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.51 seconds (process running for 3.937)
