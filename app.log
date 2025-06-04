@@ -50,3 +50,20 @@
 2025-06-05T01:41:02.510+05:30  INFO 41728 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
 2025-06-05T01:41:03.863+05:30  INFO 41728 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
 2025-06-05T01:41:04.284+05:30  INFO 41728 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.23 seconds (process running for 3.81)
+2025-06-05T01:47:56.587+05:30  INFO 75320 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Starting SpringBootGYMHtmlAppApplicationTests using Java 17.0.10 with PID 75320 (started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:47:56.593+05:30  INFO 75320 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:47:57.986+05:30  INFO 75320 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:47:58.421+05:30  INFO 75320 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.532 seconds (process running for 3.679)
+2025-06-05T01:48:12.831+05:30  INFO 73440 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : Starting SpringBootGYMHtmlAppApplication using Java 17.0.10 with PID 73440 (E:\Project\springboot-gym-html-app-github-windows\target\classes started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:48:12.834+05:30  INFO 73440 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:48:13.511+05:30  INFO 73440 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-06-05T01:48:13.524+05:30  INFO 73440 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-05T01:48:13.525+05:30  INFO 73440 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-06-05T01:48:13.566+05:30  INFO 73440 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-05T01:48:13.567+05:30  INFO 73440 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 675 ms
+2025-06-05T01:48:13.649+05:30  INFO 73440 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:48:13.834+05:30  INFO 73440 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-06-05T01:48:13.843+05:30  INFO 73440 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : Started SpringBootGYMHtmlAppApplication in 1.481 seconds (process running for 2.053)
+2025-06-05T01:48:20.237+05:30  INFO 73440 --- [http-nio-0.0.0.0-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-05T01:48:20.237+05:30  INFO 73440 --- [http-nio-0.0.0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-05T01:48:20.239+05:30  INFO 73440 --- [http-nio-0.0.0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
