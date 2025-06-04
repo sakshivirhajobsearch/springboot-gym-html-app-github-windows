@@ -34,6 +34,13 @@ jobs:
         if: success()
         run: echo "Spring Boot app is running locally!"
 
+      - name: Test home.html
+        run: |
+        java -jar target/your-app.jar &
+        Start-Sleep -Seconds 10
+        curl http://localhost:8081/home.html
+        shell: pwsh
+
       - name: Notify Failure
         if: failure()
         run: echo "Build failed!"
