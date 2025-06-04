@@ -8,11 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
-
-    env:
-      JAVA_HOME: 'C:\\Program Files\\Java\\jdk-17'
-      PATH: 'C:\\Program Files\\Java\\jdk-17\\bin;${{ env.PATH }}'
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
@@ -27,7 +23,7 @@ jobs:
       - name: Set up Maven
         uses: stCarolas/setup-maven@v4
         with:
-          maven-version: '3.9.9'
+          maven-version: '3.8.8'
 
       - name: Build with Maven
         run: mvn clean install
