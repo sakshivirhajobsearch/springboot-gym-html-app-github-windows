@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-         
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
@@ -11,13 +11,13 @@
     <packaging>jar</packaging>
 
     <name>Spring Boot Gym HTML App</name>
-    <description>Spring Boot application with Thymeleaf frontend</description>
+    <description>springboot-gym-html-app-github-windows with Thymeleaf frontend</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.4</version>
-        <relativePath/>
+        <relativePath/> <!-- Lookup from Maven Central -->
     </parent>
 
     <properties>
@@ -25,17 +25,19 @@
     </properties>
 
     <dependencies>
+        <!-- Spring Web (REST, Controllers, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Thymeleaf Template Engine -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            <version>3.5.0</version>
         </dependency>
 
+        <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -57,16 +59,5 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.yml</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.html</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 </project>
