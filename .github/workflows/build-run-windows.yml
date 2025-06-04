@@ -32,24 +32,38 @@ jobs:
         shell: powershell
         run: |
           $env:PATH="$env:JAVA_HOME\bin;" + $env:PATH
-          Start-Process -FilePath java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar", "--server.address=0.0.0.0" -NoNewWindow
+          $process = Start-Process -FilePath java `
+            -ArgumentList @(
+              "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar",
+              "--server.address=0.0.0.0",
+              "--server.port=8080"
+            ) `
+            -NoNewWindow `
+            -RedirectStandardOutput "app.log" `
+            -RedirectStandardError "app_error.log" `
+            -PassThru
+
           $maxRetries = 30
           $retry = 0
-          while ($retry -lt $maxRetries) {
+          $appStarted = $false
+
+          while ($retry -lt $maxRetries -and -not $appStarted) {
             Start-Sleep -Seconds 2
             try {
               $response = Invoke-WebRequest -Uri http://localhost:8080/home -UseBasicParsing -TimeoutSec 5
               if ($response.StatusCode -eq 200) {
                 Write-Host "/home is accessible"
-                break
+                $appStarted = $true
               }
             } catch {
               Write-Host "Waiting for app to start... (Attempt $($retry + 1) of $maxRetries)"
             }
             $retry++
           }
-          if ($retry -eq $maxRetries) {
-            Write-Host "App did not start within expected time."
+
+          if (-not $appStarted) {
+            Write-Host "App did not start within expected time. Showing last 20 lines of app.log:"
+            Get-Content -Path app.log -Tail 20
             Exit 1
           }
 
