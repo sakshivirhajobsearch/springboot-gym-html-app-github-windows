@@ -15,13 +15,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: main
 
-      - name: Set up Maven
+      - name: Set up Java and Maven
         run: |
           set PATH=%JAVA_HOME%\bin;%PATH%
-          mvn --version
+          mvn -version
         shell: cmd
 
       - name: Build with Maven
@@ -30,41 +28,31 @@ jobs:
           mvn clean install
         shell: cmd
 
-      - name: Run Spring Boot App and Test Endpoint
+      - name: Run Spring Boot App and Wait for Readiness
         shell: powershell
         run: |
           $env:PATH="$env:JAVA_HOME\bin;" + $env:PATH
-          # Start Spring Boot app in background, output redirected to app.log
           Start-Process -FilePath java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar", "--server.address=0.0.0.0" -NoNewWindow
-          # Wait and retry loop for app to be ready
           $maxRetries = 30
           $retry = 0
-          $appStarted = $false
-          while ($retry -lt $maxRetries -and -not $appStarted) {
+          while ($retry -lt $maxRetries) {
             Start-Sleep -Seconds 2
             try {
-              $response = Invoke-WebRequest -Uri http://localhost:8080/home.html -UseBasicParsing -TimeoutSec 5
+              $response = Invoke-WebRequest -Uri http://localhost:8080/home -UseBasicParsing -TimeoutSec 5
               if ($response.StatusCode -eq 200) {
-                Write-Host "/home.html is accessible"
-                $appStarted = $true
+                Write-Host "/home is accessible"
+                break
               }
             } catch {
-              Write-Host "Waiting for app to start... (Attempt $($retry+1) of $maxRetries)"
+              Write-Host "Waiting for app to start... (Attempt $($retry + 1) of $maxRetries)"
             }
             $retry++
           }
-          if (-not $appStarted) {
-            Write-Host "App did not start within expected time. Showing last 20 lines of app.log:"
-            Get-Content -Path app.log -Tail 20
+          if ($retry -eq $maxRetries) {
+            Write-Host "App did not start within expected time."
             Exit 1
           }
 
       - name: Notify Success
-        if: success()
-        run: echo "Spring Boot app is running and test passed!"
-        shell: cmd
-
-      - name: Notify Failure
-        if: failure()
-        run: echo "Build or test failed!"
+        run: echo "Spring Boot app is running and accessible!"
         shell: cmd
