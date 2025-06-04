@@ -9,9 +9,6 @@ jobs:
   build-and-run:
     runs-on: windows-latest
 
-    env:
-      JAVA_HOME: 'C:\\Program Files\\Java\\jdk-17'
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,8 +24,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      - name: List JAR Files (for debug)
+        run: dir target
+
       - name: Run Spring Boot JAR
-        run: java -jar target/springboot-gym-html-app-1.0.0.jar
+        run: |
+          $jar = Get-ChildItem -Path target -Filter "*.jar" | Select-Object -First 1
+          java -jar "target\$($jar.Name)"
+        shell: pwsh
 
       - name: Notify Success
         if: success()
