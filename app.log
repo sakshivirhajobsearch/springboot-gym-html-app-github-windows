@@ -26,3 +26,27 @@
 2025-06-05T01:31:16.930+05:30  INFO 69908 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
 2025-06-05T01:31:18.333+05:30  INFO 69908 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
 2025-06-05T01:31:18.787+05:30  INFO 69908 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.353 seconds (process running for 3.573)
+2025-06-05T01:38:50.320+05:30  INFO 53632 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Starting SpringBootGYMHtmlAppApplicationTests using Java 17.0.10 with PID 53632 (started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:38:50.332+05:30  INFO 53632 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:38:51.580+05:30  INFO 53632 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:38:51.978+05:30  INFO 53632 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.128 seconds (process running for 3.519)
+2025-06-05T01:39:21.232+05:30  INFO 73812 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : Starting SpringBootGYMHtmlAppApplication using Java 17.0.10 with PID 73812 (E:\Project\springboot-gym-html-app-github-windows\target\classes started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:39:21.236+05:30  INFO 73812 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:39:22.097+05:30  INFO 73812 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-06-05T01:39:22.110+05:30  INFO 73812 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-05T01:39:22.111+05:30  INFO 73812 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-06-05T01:39:22.148+05:30  INFO 73812 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-05T01:39:22.149+05:30  INFO 73812 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 842 ms
+2025-06-05T01:39:22.239+05:30  INFO 73812 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:39:22.480+05:30  INFO 73812 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-06-05T01:39:22.490+05:30  INFO 73812 --- [main] c.e.s.SpringBootGYMHtmlAppApplication    : Started SpringBootGYMHtmlAppApplication in 1.749 seconds (process running for 2.365)
+2025-06-05T01:39:50.067+05:30  INFO 73812 --- [http-nio-0.0.0.0-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-05T01:39:50.068+05:30  INFO 73812 --- [http-nio-0.0.0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-05T01:39:50.069+05:30  INFO 73812 --- [http-nio-0.0.0.0-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-05T01:40:42.681+05:30  INFO 73812 --- [RMI TCP Connection(5)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2025-06-05T01:40:42.684+05:30  INFO 73812 --- [RMI TCP Connection(5)-127.0.0.1] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-06-05T01:40:42.929+05:30  INFO 73812 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-06-05T01:41:02.505+05:30  INFO 41728 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Starting SpringBootGYMHtmlAppApplicationTests using Java 17.0.10 with PID 41728 (started by anura in E:\Project\springboot-gym-html-app-github-windows)
+2025-06-05T01:41:02.510+05:30  INFO 41728 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2025-06-05T01:41:03.863+05:30  INFO 41728 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-06-05T01:41:04.284+05:30  INFO 41728 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 2.23 seconds (process running for 3.81)
