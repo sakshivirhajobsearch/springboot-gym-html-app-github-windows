@@ -31,12 +31,13 @@ jobs:
           Start-Sleep -Seconds 15
           Get-Content springboot.log
 
-      - name: Test App Endpoint
-        shell: pwsh
+      - name: Test Spring Boot App Endpoint
+        shell: powershell
         run: |
-          $response = Invoke-WebRequest http://localhost:8084/home.html
+          $response = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
           if ($response.StatusCode -eq 200) {
             Write-Host "App is up and serving home.html"
           } else {
             throw "App failed to serve home.html"
           }
+
