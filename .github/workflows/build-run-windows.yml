@@ -1,43 +1,59 @@
-name: Deploy Spring Boot App
+name: Java Spring Boot Build and Test home.html
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  build-and-run:
-    runs-on: self-hosted
+  build:
+    runs-on: windows-latest
+
+    env:
+      JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.15-6\x64
+      JAVA_HOME_17_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.15-6\x64
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
 
-      - name: Build App
+      - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Run App
+      - name: Run Spring Boot app in background
         shell: pwsh
         run: |
-          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar > app.log 2> app.err &
+          Start-Process java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar"
           Start-Sleep -Seconds 30
+
+      - name: Check if app is running on http://localhost:8084/home.html
+        shell: pwsh
+        run: |
           try {
             $res = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
             if ($res.StatusCode -eq 200) {
-              Write-Host "App is running."
+              Write-Host "App is running and served home.html"
             } else {
-              Write-Host "App not serving correctly."
-              Get-Content app.err
-              throw "Failed"
+              Write-Host "App responded but not correctly."
+              throw "Non-200 response"
             }
           } catch {
-            Write-Host "App failed."
-            Get-Content app.err
-            throw "App error"
+            Write-Host "App failed to start or respond correctly."
+            echo "=== Showing app.log if available ==="
+            Get-Content app.log -ErrorAction SilentlyContinue
+            echo "=== Showing app.err if available ==="
+            Get-Content app.err -ErrorAction SilentlyContinue
+            throw "App failed to start"
           }
+
+      - name: Cleanup
+        shell: pwsh
+        run: |
+          Stop-Process -Name java -Force -ErrorAction SilentlyContinue
