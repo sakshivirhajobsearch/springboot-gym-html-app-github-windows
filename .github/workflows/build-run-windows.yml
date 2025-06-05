@@ -1,4 +1,4 @@
-name: Maven Package
+name: Maven Package (Ubuntu Self-Hosted)
 
 on:
   push:
@@ -24,14 +24,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create settings.xml (Windows-safe)
-        shell: pwsh
+      - name: Create settings.xml for GitHub Packages
         run: |
-          $m2Dir = "$HOME/.m2"
-          if (!(Test-Path -Path $m2Dir)) {
-            New-Item -ItemType Directory -Path $m2Dir | Out-Null
-          }
-          @"
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
           <settings>
             <servers>
               <server>
@@ -41,7 +37,7 @@ jobs:
               </server>
             </servers>
           </settings>
-          "@ | Set-Content -Path "$m2Dir/settings.xml"
+          EOF
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
