@@ -45,6 +45,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Actuator -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -66,8 +67,8 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/OWNER/REPOSITORY</url>
+			<url>https://maven.pkg.github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME</url>
 		</repository>
 	</distributionManagement>
 
-</project>
+	<reposit
