@@ -30,7 +30,9 @@ jobs:
       - name: Run Spring Boot app in background
         shell: pwsh
         run: |
-          Start-Process java -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar"
+          $env:SERVER_PORT="8084"
+          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar `
+            *> app.log 2> app.err & 
           Start-Sleep -Seconds 30
 
       - name: Check if app is running on http://localhost:8084/home.html
@@ -41,14 +43,14 @@ jobs:
             if ($res.StatusCode -eq 200) {
               Write-Host "App is running and served home.html"
             } else {
-              Write-Host "App responded but not correctly."
+              Write-Host "App responded but not with 200."
               throw "Non-200 response"
             }
           } catch {
             Write-Host "App failed to start or respond correctly."
-            echo "=== Showing app.log if available ==="
+            echo "=== Showing app.log ==="
             Get-Content app.log -ErrorAction SilentlyContinue
-            echo "=== Showing app.err if available ==="
+            echo "=== Showing app.err ==="
             Get-Content app.err -ErrorAction SilentlyContinue
             throw "App failed to start"
           }
