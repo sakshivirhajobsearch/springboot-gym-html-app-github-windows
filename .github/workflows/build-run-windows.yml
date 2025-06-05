@@ -23,14 +23,19 @@ jobs:
       - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Kill any process on 9090 (optional)
+      - name: Kill processes on port 9090
         shell: pwsh
         run: |
           $ports = netstat -ano | Select-String ':9090'
           foreach ($line in $ports) {
-            $pid = ($line -split '\s+')[-1]
-            Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-          }
+            $procId = ($line -split '\s+')[-1]
+            try {
+              Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
+              Write-Host "Stopped process $procId using port 9090"
+            } catch {
+              Write-Host "Failed to stop process $procId"
+            }
+          }  
 
       - name: Start Spring Boot Application
         shell: pwsh
