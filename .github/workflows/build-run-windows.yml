@@ -40,7 +40,7 @@ jobs:
       - name: Wait and Test App Endpoint
         shell: powershell
         run: |
-          $retries = 12
+          $retries = 3
           $success = $false
           for ($i = 0; $i -lt $retries; $i++) {
             try {
