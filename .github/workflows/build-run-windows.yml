@@ -30,7 +30,10 @@ jobs:
         shell: powershell
         run: |
           Stop-Process -Name "java" -Force -ErrorAction SilentlyContinue
-          java -jar target\springboot-*.jar --server.port=8084 > springboot.log 2> springboot.err &
+          $jar = Get-ChildItem -Path "target" -Filter "springboot-*.jar" | Select-Object -First 1
+          if ($null -eq $jar) { throw "No JAR file found in target/" }
+          Start-Process -FilePath "java" -ArgumentList "-jar", $jar.FullName, "--server.port=8084" `
+          -RedirectStandardOutput "springboot.log" -RedirectStandardError "springboot.err"
           Start-Sleep -Seconds 20
           Get-Content springboot.log
 
