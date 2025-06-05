@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted  # Ensure it's your Windows 11 GitHub runner
+    runs-on: self-hosted
 
     steps:
       - name: Checkout Repository
@@ -23,30 +23,42 @@ jobs:
       - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Run Spring Boot Application on Port 9090
+      - name: Kill any process on 9090 (optional)
+        shell: pwsh
         run: |
-          # Kill any process on 9090 (optional)
-          netstat -ano | findstr :9090 | ForEach-Object {
-            $pid = ($_ -split '\s+')[-1]
+          $ports = netstat -ano | Select-String ':9090'
+          foreach ($line in $ports) {
+            $pid = ($line -split '\s+')[-1]
             Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-          } 2>$null
-
-          # Start application in background
-          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
-
-          # Wait a bit for the app to boot up
-          Start-Sleep -Seconds 15
-
-      - name: Test Home Page
-        run: |
-          try {
-          $response = Invoke-WebRequest http://localhost:9090/ -UseBasicParsing
-          Write-Host "Status code: $($response.StatusCode)"
-          if ($response.StatusCode -ne 200) {
-            throw "Unexpected status code"
-            }
-          } catch {
-            Write-Host "Invoke-WebRequest failed: $_"
-          throw
           }
 
+      - name: Start Spring Boot Application in background
+        shell: pwsh
+        run: |
+          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
+          Start-Sleep -Seconds 5  # brief wait before health check
+
+      - name: Wait for application to be ready
+        shell: pwsh
+        run: |
+          $maxRetries = 3
+          $retry = 0
+          $success = $false
+          while (-not $success -and $retry -lt $maxRetries) {
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:9090/ -UseBasicParsing -TimeoutSec 5
+              if ($response.StatusCode -eq 200) {
+                Write-Host "Application is up and running."
+                $success = $true
+              } else {
+                throw "Status code: $($response.StatusCode)"
+              }
+            } catch {
+              Write-Host "Attempt $($retry+1): Application not ready yet. Waiting 5 seconds..."
+              Start-Sleep -Seconds 5
+              $retry++
+            }
+          }
+          if (-not $success) {
+            throw "Application did not start within expected time."
+          }
