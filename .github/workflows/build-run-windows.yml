@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Self-hosted Windows runner
+    runs-on: self-hosted  # Windows self-hosted runner
 
     steps:
       - name: Checkout repository
@@ -23,21 +23,37 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Start Spring Boot and Capture Logs
+      - name: List built files
+        run: dir target
+
+      - name: Start Spring Boot App in Background
         shell: powershell
         run: |
           Stop-Process -Name "java" -Force -ErrorAction SilentlyContinue
-          Start-Process -FilePath "java" -ArgumentList "-jar", "target\springboot-*.jar", "--server.port=8084" -RedirectStandardOutput "springboot.log" -RedirectStandardError "springboot.err"
-          Start-Sleep -Seconds 15
+          java -jar target\springboot-*.jar --server.port=8084 > springboot.log 2> springboot.err &
+          Start-Sleep -Seconds 20
           Get-Content springboot.log
 
-      - name: Test Spring Boot App Endpoint
+      - name: Wait and Test App Endpoint
         shell: powershell
         run: |
-          $response = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
-          if ($response.StatusCode -eq 200) {
-            Write-Host "App is up and serving home.html"
-          } else {
+          $retries = 12
+          $success = $false
+          for ($i = 0; $i -lt $retries; $i++) {
+            try {
+              $response = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
+              if ($response.StatusCode -eq 200) {
+                Write-Host "App is up and serving home.html"
+                $success = $true
+                break
+              }
+            } catch {
+              Write-Host "Waiting for app to start... ($($i + 1)/$retries)"
+              Start-Sleep -Seconds 5
+            }
+          }
+          if (-not $success) {
+            Write-Host "App failed to start"
+            Get-Content springboot.err
             throw "App failed to serve home.html"
           }
-
