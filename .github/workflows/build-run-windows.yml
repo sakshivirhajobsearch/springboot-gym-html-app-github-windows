@@ -23,17 +23,23 @@ jobs:
       - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Kill any process on 9090 (optional)
-        shell: pwsh
-        run: |
-          $ports = netstat -ano | Select-String ':9090'
-          foreach ($line in $ports) {
-            $pid = ($line -split '\s+')[-1]
-            Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-          }
-
       - name: Start Spring Boot Application in background
         shell: pwsh
         run: |
           Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
-          Start-Sleep -Seconds 10  # give app more time to start
+          Start-Sleep -Seconds 20  # Increase wait time to let app fully start
+
+      - name: Test access to /home.html
+        shell: pwsh
+        run: |
+          try {
+            $response = Invoke-WebRequest -Uri http://localhost:9090/home.html -UseBasicParsing -TimeoutSec 10
+            if ($response.StatusCode -eq 200) {
+              Write-Host "Access to /home.html successful"
+            } else {
+              Write-Error "Unexpected status code $($response.StatusCode)"
+            }
+          } catch {
+            Write-Error "Failed to access /home.html. Error details: $($_.Exception.Message)"
+            throw
+          }
