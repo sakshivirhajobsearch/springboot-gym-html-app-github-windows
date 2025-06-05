@@ -23,11 +23,35 @@ jobs:
       - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Start Spring Boot Application in background
+      - name: Start Spring Boot Application and capture logs
         shell: pwsh
         run: |
-          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
-          Start-Sleep -Seconds 20  # Increase wait time to let app fully start
+          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.port=9090" -NoNewWindow -RedirectStandardOutput logs.txt -RedirectStandardError errors.txt -PassThru | Out-Null
+          Start-Sleep -Seconds 10
+
+      - name: Wait for Spring Boot to start
+        shell: pwsh
+        run: |
+          $timeout = 60
+          $elapsed = 0
+          $portOpen = $false
+          while ($elapsed -lt $timeout -and -not $portOpen) {
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:9090/actuator/health -UseBasicParsing -TimeoutSec 5
+              if ($response.StatusCode -eq 200) {
+                $portOpen = $true
+                Write-Host "Spring Boot is running"
+              }
+            } catch {}
+            if (-not $portOpen) {
+              Start-Sleep -Seconds 5
+              $elapsed += 5
+            }
+          }
+          if (-not $portOpen) {
+            Write-Error "Spring Boot app did not start within timeout"
+            exit 1
+          }
 
       - name: Test access to /home.html
         shell: pwsh
