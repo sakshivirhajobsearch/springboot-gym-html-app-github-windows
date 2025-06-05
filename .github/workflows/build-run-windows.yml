@@ -32,8 +32,46 @@ jobs:
             Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
           }
 
-      - name: Start Spring Boot Application in background
+      - name: Start Spring Boot Application
         shell: pwsh
         run: |
-          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
-          Start-Sleep -Seconds 10  # give app more time to start
+          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow -RedirectStandardOutput logs.txt -RedirectStandardError errors.txt -PassThru | Out-Null
+
+      - name: Wait for Spring Boot to start
+        shell: pwsh
+        run: |
+          $timeout = 60
+          $elapsed = 0
+          $portOpen = $false
+          while ($elapsed -lt $timeout -and -not $portOpen) {
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:9090/actuator/health -UseBasicParsing -TimeoutSec 5
+              if ($response.StatusCode -eq 200) {
+                $portOpen = $true
+                Write-Host "Spring Boot is running successfully on port 9090!"
+              }
+            } catch {}
+            if (-not $portOpen) {
+              Start-Sleep -Seconds 5
+              $elapsed += 5
+            }
+          }
+          if (-not $portOpen) {
+            Write-Error "Spring Boot app did not start within timeout!"
+            exit 1
+          }
+
+      - name: Test access to /home.html
+        shell: pwsh
+        run: |
+          try {
+            $response = Invoke-WebRequest -Uri http://localhost:9090/home.html -UseBasicParsing -TimeoutSec 10
+            if ($response.StatusCode -eq 200) {
+              Write-Host "Access to /home.html successful!"
+            } else {
+              Write-Error "Unexpected status code $($response.StatusCode)"
+            }
+          } catch {
+            Write-Error "Failed to access /home.html. Error details: $($_.Exception.Message)"
+            throw
+          }
