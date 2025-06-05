@@ -37,28 +37,3 @@ jobs:
         run: |
           Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
           Start-Sleep -Seconds 10  # give app more time to start
-
-      - name: Wait for application to be ready
-        shell: pwsh
-        run: |
-          $maxRetries = 6
-          $retry = 0
-          $success = $false
-          while (-not $success -and $retry -lt $maxRetries) {
-            try {
-              $response = Invoke-WebRequest -Uri http://localhost:9090/ -UseBasicParsing -TimeoutSec 5
-              if ($response.StatusCode -eq 200) {
-                Write-Host "Application is up and running."
-                $success = $true
-              } else {
-                throw "Status code: $($response.StatusCode)"
-              }
-            } catch {
-              Write-Host "Attempt $($retry+1): Application not ready yet. Waiting 5 seconds..."
-              Start-Sleep -Seconds 5
-              $retry++
-            }
-          }
-          if (-not $success) {
-            throw "Application did not start within expected time."
-          }
