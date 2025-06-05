@@ -1,13 +1,13 @@
 package com.example.springboothtmlapp.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@RestController
-public class HomeController { // Make sure class name matches filename
-	
-	@RequestMapping("/home")
+@Controller
+public class HomeController {
+
+	@GetMapping("/home.html")
 	public String home() {
-		return "home"; // Thymeleaf will look for home.html template
+		return "home"; // This maps to templates/home.html
 	}
 }
