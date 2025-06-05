@@ -1,4 +1,4 @@
-name: Java Spring Boot Build and Test home.html
+name: Deploy Spring Boot App on Windows 11 Self-Hosted Runner
 
 on:
   push:
@@ -7,12 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: windows-latest
-
-    env:
-      JAVA_HOME: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.15-6\x64
-      JAVA_HOME_17_X64: C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.15-6\x64
+  build-and-deploy:
+    runs-on: self-hosted  # Ensure it's your Windows 11 GitHub runner
 
     steps:
       - name: Checkout Repository
@@ -24,38 +20,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Build with Maven
+      - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Run Spring Boot app in background
-        shell: pwsh
+      - name: Run Spring Boot Application on Port 8084
         run: |
-          $env:SERVER_PORT="8084"
-          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar `
-            *> app.log 2> app.err & 
-          Start-Sleep -Seconds 30
+          # Kill any process on 8084 (optional)
+          netstat -ano | findstr :8084 | ForEach-Object {
+            $pid = ($_ -split '\s+')[-1]
+            Stop-Process -Id $pid -Force
+          } 2>$null
 
-      - name: Check if app is running on http://localhost:8084/home.html
-        shell: pwsh
+          # Start application in background
+          Start-Process -FilePath "java" -ArgumentList "-jar target\*.jar" -NoNewWindow
+
+          # Wait a bit for the app to boot up
+          Start-Sleep -Seconds 15
+
+      - name: Test Home Page
         run: |
-          try {
-            $res = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
-            if ($res.StatusCode -eq 200) {
-              Write-Host "App is running and served home.html"
-            } else {
-              Write-Host "App responded but not with 200."
-              throw "Non-200 response"
-            }
-          } catch {
-            Write-Host "App failed to start or respond correctly."
-            echo "=== Showing app.log ==="
-            Get-Content app.log -ErrorAction SilentlyContinue
-            echo "=== Showing app.err ==="
-            Get-Content app.err -ErrorAction SilentlyContinue
-            throw "App failed to start"
+          $response = Invoke-WebRequest http://localhost:8084/ -UseBasicParsing
+          if ($response.StatusCode -ne 200) {
+            throw "Application failed to start or / is not reachable"
           }
-
-      - name: Cleanup
-        shell: pwsh
-        run: |
-          Stop-Process -Name java -Force -ErrorAction SilentlyContinue
