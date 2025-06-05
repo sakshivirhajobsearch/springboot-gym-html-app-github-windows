@@ -1,4 +1,0 @@
-2025-06-05T03:06:25.357+05:30  INFO 23380 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Starting SpringBootGYMHtmlAppApplicationTests using Java 17.0.10 with PID 23380 (started by anura in E:\Project\springboot-gym-html-app-github-windows)
-2025-06-05T03:06:25.357+05:30  INFO 23380 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : No active profile set, falling back to 1 default profile: "default"
-2025-06-05T03:06:26.042+05:30  INFO 23380 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
-2025-06-05T03:06:26.376+05:30  INFO 23380 --- [main] e.t.SpringBootGYMHtmlAppApplicationTests : Started SpringBootGYMHtmlAppApplicationTests in 1.265 seconds (process running for 1.878)
