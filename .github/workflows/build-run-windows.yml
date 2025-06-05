@@ -32,7 +32,7 @@ jobs:
           } 2>$null
 
           # Start application in background
-          Start-Process -FilePath "java" -ArgumentList "-jar target\*.jar" -NoNewWindow
+          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
 
           # Wait a bit for the app to boot up
           Start-Sleep -Seconds 15
