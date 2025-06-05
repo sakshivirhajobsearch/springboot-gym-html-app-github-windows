@@ -46,9 +46,9 @@ jobs:
         shell: pwsh
         run: |
           Start-Process -FilePath "java" `
-            -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.port=9090" `-NoNewWindow `
-            -RedirectStandardOutput logs.txt `
-            -RedirectStandardError errors.txt `
+            -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.port=9090" `
+            -RedirectStandardOutput "logs.txt" `
+            -RedirectStandardError "errors.txt" `
             -PassThru | Out-Null
           Start-Sleep -Seconds 15
 
