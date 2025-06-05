@@ -7,7 +7,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>springboot-gym-html-app-github-windows</artifactId>
-    <version>${revision}</version>
+    <!--<version>1.0.2</version>-->
     <packaging>jar</packaging>
 
     <name>Spring Boot Gym HTML App</name>
