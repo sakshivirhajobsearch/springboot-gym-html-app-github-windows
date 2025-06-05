@@ -1,17 +1,16 @@
-name: Deploy Spring Boot Static HTML App
+name: Deploy Spring Boot Static App on Windows Self-Hosted
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: self-hosted  # Windows self-hosted runner
+  build-and-run:
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Java 17
@@ -20,27 +19,27 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build with Maven
+      - name: Set up Maven
+        run: choco install maven --version=3.9.9 -y
+
+      - name: Build Spring Boot App
         run: mvn clean package -DskipTests
 
-      - name: List built files
-        run: dir target
-
-      - name: Start Spring Boot App in Background
-        shell: powershell
+      - name: Check port 8084 usage (should be free)
         run: |
-          Stop-Process -Name "java" -Force -ErrorAction SilentlyContinue
-          $jar = Get-ChildItem -Path "target" -Filter "springboot-*.jar" | Select-Object -First 1
-          if ($null -eq $jar) { throw "No JAR file found in target/" }
-          Start-Process -FilePath "java" -ArgumentList "-jar", $jar.FullName, "--server.port=8084" `
-          -RedirectStandardOutput "springboot.log" -RedirectStandardError "springboot.err"
-          Start-Sleep -Seconds 20
-          Get-Content springboot.log
+          netstat -ano | findstr :8084 || echo "Port 8084 is free"
 
-      - name: Wait and Test App Endpoint
-        shell: powershell
+      - name: Run Spring Boot App with logs
+        shell: pwsh
         run: |
-          $retries = 3
+          Start-Process -NoNewWindow -FilePath "java" -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar" -RedirectStandardOutput springboot.log -RedirectStandardError springboot.err
+          Write-Host "Waiting 30 seconds for the app to start..."
+          Start-Sleep -Seconds 30
+
+      - name: Verify app startup by health check
+        shell: pwsh
+        run: |
+          $retries = 5
           $success = $false
           for ($i = 0; $i -lt $retries; $i++) {
             try {
@@ -52,11 +51,12 @@ jobs:
               }
             } catch {
               Write-Host "Waiting for app to start... ($($i + 1)/$retries)"
-              Start-Sleep -Seconds 5
+              Start-Sleep -Seconds 10
             }
           }
           if (-not $success) {
-            Write-Host "App failed to start"
+            Write-Host "App failed to start, printing logs:"
+            Get-Content springboot.log
             Get-Content springboot.err
             throw "App failed to serve home.html"
           }
