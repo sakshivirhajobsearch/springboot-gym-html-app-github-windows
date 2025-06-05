@@ -23,11 +23,19 @@ jobs:
       - name: Build Project with Maven
         run: mvn clean package -DskipTests
 
-      - name: Start Spring Boot Application and capture logs
+      - name: Kill any process on 9090 (optional)
         shell: pwsh
         run: |
-          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar --server.port=9090" -NoNewWindow -RedirectStandardOutput logs.txt -RedirectStandardError errors.txt -PassThru | Out-Null
-          Start-Sleep -Seconds 10
+          $ports = netstat -ano | Select-String ':9090'
+          foreach ($line in $ports) {
+            $pid = ($line -split '\s+')[-1]
+            Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Start Spring Boot Application
+        shell: pwsh
+        run: |
+          Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow -RedirectStandardOutput logs.txt -RedirectStandardError errors.txt -PassThru | Out-Null
 
       - name: Wait for Spring Boot to start
         shell: pwsh
@@ -40,7 +48,7 @@ jobs:
               $response = Invoke-WebRequest -Uri http://localhost:9090/actuator/health -UseBasicParsing -TimeoutSec 5
               if ($response.StatusCode -eq 200) {
                 $portOpen = $true
-                Write-Host "Spring Boot is running"
+                Write-Host "Spring Boot is running successfully on port 9090!"
               }
             } catch {}
             if (-not $portOpen) {
@@ -49,7 +57,7 @@ jobs:
             }
           }
           if (-not $portOpen) {
-            Write-Error "Spring Boot app did not start within timeout"
+            Write-Error "Spring Boot app did not start within timeout!"
             exit 1
           }
 
@@ -59,7 +67,7 @@ jobs:
           try {
             $response = Invoke-WebRequest -Uri http://localhost:9090/home.html -UseBasicParsing -TimeoutSec 10
             if ($response.StatusCode -eq 200) {
-              Write-Host "Access to /home.html successful"
+              Write-Host "Access to /home.html successful!"
             } else {
               Write-Error "Unexpected status code $($response.StatusCode)"
             }
