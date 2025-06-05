@@ -23,12 +23,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Run Spring Boot App on Port 8084
-        shell: pwsh
+      - name: Start Spring Boot and Capture Logs
+        shell: powershell
         run: |
           Stop-Process -Name "java" -Force -ErrorAction SilentlyContinue
-          Start-Process -NoNewWindow -FilePath "java" -ArgumentList "-jar target\springboot-*.jar --server.port=8084"
+          Start-Process -FilePath "java" -ArgumentList "-jar", "target\springboot-*.jar", "--server.port=8084" -RedirectStandardOutput "springboot.log" -RedirectStandardError "springboot.err"
           Start-Sleep -Seconds 15
+          Get-Content springboot.log
 
       - name: Test App Endpoint
         shell: pwsh
