@@ -36,12 +36,12 @@ jobs:
         shell: pwsh
         run: |
           Start-Process -FilePath "java" -ArgumentList "-jar target\springboot-gym-html-app-github-windows-1.0.0.jar" -NoNewWindow
-          Start-Sleep -Seconds 5  # brief wait before health check
+          Start-Sleep -Seconds 10  # give app more time to start
 
       - name: Wait for application to be ready
         shell: pwsh
         run: |
-          $maxRetries = 3
+          $maxRetries = 6
           $retry = 0
           $success = $false
           while (-not $success -and $retry -lt $maxRetries) {
