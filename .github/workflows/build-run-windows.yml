@@ -19,11 +19,8 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Maven
-        run: choco install maven --version=3.9.9 -y
-
-      - name: Build Spring Boot App
-        run: mvn clean package -DskipTests
+      - name: Build Spring Boot App with Maven Wrapper
+        run: .\mvnw.cmd clean package -DskipTests
 
       - name: Check port 8084 usage (should be free)
         run: |
