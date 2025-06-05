@@ -1,4 +1,4 @@
-name: Deploy Spring Boot Static App on Windows Self-Hosted
+name: Deploy Spring Boot App
 
 on:
   push:
@@ -13,47 +13,31 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Java 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build Spring Boot App with Maven Wrapper
-        run: .\mvnw.cmd clean package -DskipTests
+      - name: Build App
+        run: mvn clean package -DskipTests
 
-      - name: Check port 8084 usage (should be free)
-        run: |
-          netstat -ano | findstr :8084 || echo "Port 8084 is free"
-
-      - name: Run Spring Boot App with logs
+      - name: Run App
         shell: pwsh
         run: |
-          Start-Process -NoNewWindow -FilePath "java" -ArgumentList "-jar", "target\springboot-gym-html-app-github-windows-1.0.0.jar" -RedirectStandardOutput springboot.log -RedirectStandardError springboot.err
-          Write-Host "Waiting 30 seconds for the app to start..."
+          java -jar target\springboot-gym-html-app-github-windows-1.0.0.jar > app.log 2> app.err &
           Start-Sleep -Seconds 30
-
-      - name: Verify app startup by health check
-        shell: pwsh
-        run: |
-          $retries = 5
-          $success = $false
-          for ($i = 0; $i -lt $retries; $i++) {
-            try {
-              $response = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
-              if ($response.StatusCode -eq 200) {
-                Write-Host "App is up and serving home.html"
-                $success = $true
-                break
-              }
-            } catch {
-              Write-Host "Waiting for app to start... ($($i + 1)/$retries)"
-              Start-Sleep -Seconds 10
+          try {
+            $res = Invoke-WebRequest http://localhost:8084/home.html -UseBasicParsing
+            if ($res.StatusCode -eq 200) {
+              Write-Host "App is running."
+            } else {
+              Write-Host "App not serving correctly."
+              Get-Content app.err
+              throw "Failed"
             }
-          }
-          if (-not $success) {
-            Write-Host "App failed to start, printing logs:"
-            Get-Content springboot.log
-            Get-Content springboot.err
-            throw "App failed to serve home.html"
+          } catch {
+            Write-Host "App failed."
+            Get-Content app.err
+            throw "App error"
           }
