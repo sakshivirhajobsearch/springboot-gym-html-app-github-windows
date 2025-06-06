@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
 	@GetMapping("/home")
-	public String home() {
-		return "home"; // Thymeleaf looks for home.html in templates folder
+	public String redirectToStaticHome() {
+		return "redirect:/home.html";
 	}
 }
