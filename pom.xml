@@ -10,8 +10,8 @@
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Spring Boot Gym HTML App</name>
-    <description>springboot-gym-html-app-github-windows with Thymeleaf frontend</description>
+    <name>Spring Boot application with HTML and CSS frontend</name>
+    <description>Spring Boot application with HTML and CSS frontend</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
